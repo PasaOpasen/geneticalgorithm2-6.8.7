@@ -1,22 +1,22 @@
 """
 Copyright 2021 Demetry Pascal (forked from Ryan (Mohammad) Solgi)
 
-Permission is hereby granted, free of charge, to any person obtaining a copy of 
-this software and associated documentation files (the "Software"), to deal in 
-the Software without restriction, including without limitation the rights to use, 
-copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the 
-Software, and to permit persons to whom the Software is furnished to do so, 
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to use,
+copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the
+Software, and to permit persons to whom the Software is furnished to do so,
 subject to the following conditions:
 
 The above copyright notice and this permission notice shall be included in all
 copies or substantial portions of the Software.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL 
-THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, 
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE 
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
@@ -52,16 +52,16 @@ from .callbacks import MiddleCallbackFunc, CallbackFunc
 
 
 class geneticalgorithm2:
-    
+
     """
     Genetic Algorithm (Elitist version) for Python
-    
+
     An implementation of elitist genetic algorithm for solving problems with
     continuous, integers, or mixed variables.
-    
+
     repo path https://github.com/PasaOpasen/geneticalgorithm2
     """
-    
+
     default_params = AlgorithmParams()
     PROGRESS_BAR_LEN = 20
 
@@ -132,7 +132,7 @@ class geneticalgorithm2:
 
         for more details and examples of implementation please visit:
             https://github.com/PasaOpasen/geneticalgorithm2
-  
+
         """
 
         # all default fields
@@ -157,6 +157,7 @@ class geneticalgorithm2:
         self.population_size: int = None
         self.progress_stream = None
 
+        self.variable_type = variable_type
         # input algorithm's parameters
 
         assert isinstance(algorithm_parameters, (dict, AlgorithmParams)), (
@@ -213,7 +214,7 @@ class geneticalgorithm2:
         self.funtimeout = None if function_timeout is None else float(function_timeout)
 
         #############################################################
-        
+
         self.population_size = int(self.param.population_size)
         self._set_parents_count(self.param.parents_portion)
         self._set_elit_count(self.population_size, self.param.elit_ratio)
@@ -228,7 +229,7 @@ class geneticalgorithm2:
         # specify this function to speed up or change default behaviour
         self.fill_children: Optional[Callable[[array2D, int], None]] = None
         """
-        custom function which adds children for population POP 
+        custom function which adds children for population POP
             where POP[:parents_count] are parents lines and next lines are for children
         """
 
@@ -676,12 +677,12 @@ class geneticalgorithm2:
             else (lambda: int(time.time() - start_time) >= time_limit_secs)
         )
 
-        ############################################################# 
+        #############################################################
         # Initial Population
         self.set_function = set_function or geneticalgorithm2.default_set_function(self.f)
 
         pop_coef, initializer_func = population_initializer
-        
+
         # population creator by random or with oppositions
         if init_creator is None:
 
@@ -716,11 +717,11 @@ class geneticalgorithm2:
             ]:
                 return pop, scores
         else:
-            
+
             def without_dup(pop: array2D, scores: array1D):  # returns population without dups
                 _, index_of_dups = np.unique(pop, axis=0, return_index=True)
                 return pop[index_of_dups], scores[index_of_dups], scores.size - index_of_dups.size
-            
+
             if self.dup_oppositor is None:  # if there is no dup_oppositor, use random creator
                 def remover(pop: array2D, scores: array1D, gen: int) -> Tuple[
                     array2D,
@@ -730,7 +731,7 @@ class geneticalgorithm2:
                         return pop, scores
 
                     pp, sc, count_to_create = without_dup(pop, scores)  # pop without dups
-                    
+
                     if count_to_create == 0:
                         if SHOW_PROGRESS:
                             show_progress(t, self.max_iterations,
@@ -743,7 +744,7 @@ class geneticalgorithm2:
                     if SHOW_PROGRESS:
                         show_progress(t, self.max_iterations,
                                       f"GA is running...{t} gen from {self.max_iterations}. Kill dups!")
-                    
+
                     new_pop = np.vstack((pp, pp2))
                     new_scores = np.concatenate((sc, pp2_scores))
 
@@ -803,7 +804,7 @@ class geneticalgorithm2:
             assert callable(revolution_oppositor)
 
             from OppOpPopInit import OppositionOperators
-            
+
             def revolution(pop: array2D, scores: array1D, stagnation_count: int) -> Tuple[
                 array2D,
                 array1D
@@ -811,7 +812,7 @@ class geneticalgorithm2:
                 if stagnation_count < revolution_after_stagnation_step:
                     return pop, scores
                 part = int(pop.shape[0]*revolution_part)
-                
+
                 pp2 = OppositionOperators.Reflect(pop[-part:], self.revolution_oppositor)
                 pp2_scores = self.set_function(pp2)
 
@@ -837,7 +838,7 @@ class geneticalgorithm2:
         self._init_report()
 
         # initialization of pop
-        
+
         if start_generation.variables is None:
 
             from OppOpPopInit import init_population
@@ -846,7 +847,7 @@ class geneticalgorithm2:
 
             # pop = np.empty((real_pop_size, self.dim))
             scores = np.empty(real_pop_size)
-            
+
             pop = init_population(
                 samples_count=real_pop_size,
                 creator=self.creator,
@@ -854,7 +855,7 @@ class geneticalgorithm2:
             )
 
             if self.funtimeout and self.funtimeout > 0:  # perform simulation
-            
+
                 time_counter = 0
 
                 for p in range(0, real_pop_size):
@@ -878,7 +879,7 @@ class geneticalgorithm2:
                         f"\nSet: Average time of function evaluating (secs): "
                         f"{eval_time/real_pop_size} (total = {eval_time})\n"
                     )
-                
+
         else:
 
             self.population_size = start_generation.variables.shape[0]
@@ -904,7 +905,7 @@ class geneticalgorithm2:
                     print(f"\nFirst scores are from gotten population\n")
 
         # Initialization by select bests and local_descent
-        
+
         pop, scores = initializer_func(pop, scores)
 
         # first sort
@@ -963,7 +964,7 @@ class geneticalgorithm2:
                 )
 
             # Select parents
-            
+
             par: array2D = np.empty((self.parents_count, self.dim))
             """samples chosen to create new samples"""
             par_scores: array1D = np.empty(self.parents_count)
@@ -987,7 +988,10 @@ class geneticalgorithm2:
             par[par_slice] = pop[new_par_inds].copy()
             par_scores[par_slice] = scores[new_par_inds].copy()
 
-            pop = np.empty((self.population_size, self.dim))
+            pop = np.empty(
+                (self.population_size, self.dim),
+                dtype=(float if self.variable_type == 'real' else self.variable_type)
+            )
             """new generation"""
             scores = np.empty(self.population_size)
             """new generation scores"""
@@ -1020,7 +1024,7 @@ class geneticalgorithm2:
                 scores = self.set_function(pop)
             else:
                 scores[self.parents_count:] = self.set_function(pop[self.parents_count:])
-            
+
             # remove duplicates
             pop, scores = remover(pop, scores, t)
             # revolution
@@ -1053,8 +1057,8 @@ class geneticalgorithm2:
             sys.stdout.write(f'\n\n Objective function:\n {self.best_function}\n')
             sys.stdout.write(f'\n Used generations: {len(self.report)}')
             sys.stdout.write(f'\n Used time: {time.time() - start_time:.3g} seconds\n')
-            sys.stdout.flush() 
-        
+            sys.stdout.flush()
+
         if not no_plot:
             self.plot_results()
 
@@ -1120,10 +1124,10 @@ class geneticalgorithm2:
             if random.random() < self.prob_mut_discrete:
                 x[i] = self.discrete_mutation(x[i], *self.var_bounds[i])
 
-        for i in self.indexes_float_mut:                
+        for i in self.indexes_float_mut:
             if random.random() < self.prob_mut:
                 x[i] = self.real_mutation(x[i], *self.var_bounds[i])
-            
+
         return x
 
     def mut_middle(self, x: array1D, p1: array1D, p2: array1D):
@@ -1140,8 +1144,8 @@ class geneticalgorithm2:
                     x[i] = random.randint(v2, v1)
                 else:
                     x[i] = random.randint(*self.var_bounds[i])
-                        
-        for i in self.indexes_float_mut:                
+
+        for i in self.indexes_float_mut:
             if random.random() < self.prob_mut:
                 v1, v2 = p1[i], p2[i]
                 if v1 != v2:
@@ -1157,7 +1161,7 @@ class geneticalgorithm2:
     @staticmethod
     def default_set_function(function_for_set: Callable[[array1D], float]):
         """
-        simple function for creating set_function 
+        simple function for creating set_function
         function_for_set just applies to each row of population
         """
         def func(matrix: array2D):
@@ -1185,8 +1189,8 @@ class geneticalgorithm2:
             from joblib import Parallel, delayed
         except ModuleNotFoundError:
             raise ModuleNotFoundError(
-                "this additional feature requires joblib package," 
-                "run `pip install joblib` or `pip install --upgrade geneticalgorithm2[full]`" 
+                "this additional feature requires joblib package,"
+                "run `pip install joblib` or `pip install --upgrade geneticalgorithm2[full]`"
                 "or use another set function"
             )
 
@@ -1194,7 +1198,7 @@ class geneticalgorithm2:
             result = Parallel(n_jobs=n_jobs)(delayed(function_for_set)(matrix[i]) for i in range(matrix.shape[0]))
             return np.array(result)
         return func
-            
+
     #endregion
 
 
@@ -1209,5 +1213,4 @@ class geneticalgorithm2:
 
 
 
-            
-            
+
