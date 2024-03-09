@@ -150,6 +150,9 @@ pip install geneticalgorithm2[full]
 - new stop criteria callbacks (min std, max functions evaluations)
 - `vartype` will support strings like `iiiiibbf`
 
+## **TODO firstly**
+- Remove old style mensions from README
+
 ## 6.8.6 minor update
 
 - small package installation update: add `pip install geneticalgorithm2[full]` version
@@ -288,7 +291,7 @@ while True:
         break
 
 
-    select parents to crossover from last population and to put them to new population:
+    select parents to crossover from last population and put them to new population:
         select (elit count) best samples
         select (parents count - elit count) random samples (by selection function)
 
