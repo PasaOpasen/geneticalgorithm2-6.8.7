@@ -314,6 +314,7 @@ Firstly, u should **import needed packages**. All available (but not always nece
 ```python
 import numpy as np
 
+# the only one required import
 from geneticalgorithm2 import geneticalgorithm2 as ga # for creating and running optimization model
 
 from geneticalgorithm2 import Generation, AlgorithmParams, MiddleCallbackData # classes for comfortable parameters setting and getting
@@ -363,57 +364,64 @@ var_bound = [
 ]
 
 ```
-U don't need to use variable boundaries only if variable type of each variable is boolean.
+U don't need to use variable boundaries only if variable type of each variable is boolean. This case will be converted to discret variables with bounds `(0, 1)`.
 
-After that **create a `geneticalgorithm2` (was importing as ga) object**:
+After that **create a `geneticalgorithm2` (was imported early as ga) object**:
 
 ```python
 # style before 6.3.0 version (but still works)
-model = ga(function, dimension = 3, 
-                variable_type='real', 
-                 variable_boundaries = var_bound,
-                 function_timeout = 10,
-                 algorithm_parameters={'max_num_iteration': None,
-                                       'population_size':100,
-                                       'mutation_probability': 0.1,
-                                       'mutation_discrete_probability': None,
-                                       'elit_ratio': 0.01,
-                                       'parents_portion': 0.3,
-                                       'crossover_type':'uniform',
-                                       'mutation_type': 'uniform_by_center',
-                                       'mutation_discrete_type': 'uniform_discrete',
-                                       'selection_type': 'roulette',
-                                       'max_iteration_without_improv':None}
-            )
+model = ga(
+    function, 
+    dimension = 3, 
+    variable_type='real', 
+    variable_boundaries = var_bound,
+    function_timeout = 10,
+    algorithm_parameters={
+        'max_num_iteration': None,
+        'population_size':100,
+        'mutation_probability': 0.1,
+        'mutation_discrete_probability': None,
+        'elit_ratio': 0.01,
+        'parents_portion': 0.3,
+        'crossover_type':'uniform',
+        'mutation_type': 'uniform_by_center',
+        'mutation_discrete_type': 'uniform_discrete',
+        'selection_type': 'roulette',
+        'max_iteration_without_improv':None
+    }
+)
 
 # from version 6.3.0 it is equal to
 
-model = ga(function, dimension = 3, 
-                variable_type='real', 
-                 variable_boundaries = var_bound,
-                 function_timeout = 10,
-                 algorithm_parameters=AlgorithmParams(
-                     max_num_iteration = None,
-                     population_size = 100,
-                     mutation_probability = 0.1,
-                     mutation_discrete_probability = None,
-                     elit_ratio = 0.01,
-                     parents_portion = 0.3,
-                     crossover_type = 'uniform',
-                     mutation_type = 'uniform_by_center',
-                     mutation_discrete_type = 'uniform_discrete',
-                     selection_type = 'roulette',
-                     max_iteration_without_improv = None
-                     )
-            )
+model = ga(
+    function, 
+    dimension = 3, 
+    variable_type='real', 
+    variable_boundaries = var_bound,
+    function_timeout = 10,
+    algorithm_parameters=AlgorithmParams(
+        max_num_iteration = None,
+        population_size = 100,
+        mutation_probability = 0.1,
+        mutation_discrete_probability = None,
+        elit_ratio = 0.01,
+        parents_portion = 0.3,
+        crossover_type = 'uniform',
+        mutation_type = 'uniform_by_center',
+        mutation_discrete_type = 'uniform_discrete',
+        selection_type = 'roulette',
+        max_iteration_without_improv = None
+    )
+)
 
-# or            
-model = ga(function, dimension = 3, 
-                variable_type='real', 
-                 variable_boundaries = var_bound,
-                 function_timeout = 10,
-                 algorithm_parameters=AlgorithmParams()
-            )           
+# or (with defaults)           
+model = ga(
+    function, dimension = 3, 
+    variable_type='real', 
+    variable_boundaries = var_bound,
+    function_timeout = 10,
+    algorithm_parameters=AlgorithmParams()
+)           
 
 ```
 
@@ -448,7 +456,7 @@ result = model.run(
     time_limit_secs = None, 
     save_last_generation_as = None,
     seed = None
-    )
+)
 
 # best solution
 print(result.variable)
