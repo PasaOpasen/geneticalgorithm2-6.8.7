@@ -475,8 +475,8 @@ print(result.variable)
 # best score
 print(result.score)
 
-# last population
-print(result.last_population)
+# last generation
+print(result.last_generation)
 
 ```
 
