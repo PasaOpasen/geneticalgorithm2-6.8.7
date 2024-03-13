@@ -1053,12 +1053,14 @@ class geneticalgorithm2:
             last_generation.save(save_last_generation_as)
 
         if enable_printing:
-            show = ' '*200
-            sys.stdout.write(f'\r{show}\n')
-            sys.stdout.write(f'\r The best found solution:\n {pop[0]}')
-            sys.stdout.write(f'\n\n Objective function:\n {self.best_function}\n')
-            sys.stdout.write(f'\n Used generations: {len(self.report)}')
-            sys.stdout.write(f'\n Used time: {time.time() - start_time:.3g} seconds\n')
+            show = ' ' * 200
+            sys.stdout.write(
+                f'\r{show}\n'
+                f'\r The best found solution:\n {pop[0]}'
+                f'\n\n Objective function:\n {self.best_function}\n'
+                f'\n Used generations: {len(self.report)}'
+                f'\n Used time: {time.time() - start_time:.3g} seconds\n'
+            )
             sys.stdout.flush() 
         
         if not no_plot:
