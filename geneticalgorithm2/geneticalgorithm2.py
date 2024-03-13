@@ -21,7 +21,8 @@ SOFTWARE.
 """
 
 
-from typing import Callable, List, Tuple, Optional, Dict, Any, Union, Sequence, Set
+from typing import Callable, List, Tuple, Optional, Dict, Any, Union, Sequence, Set, Literal
+from typing_extensions import TypeAlias
 
 import collections
 import warnings
@@ -47,6 +48,12 @@ from .plotting_tools import plot_pop_scores, plot_several_lines
 from .utils import can_be_prob, is_numpy, is_current_gen_number, fast_min, random_indexes_pair
 
 from .callbacks import MiddleCallbackFunc, CallbackFunc
+
+#endregion
+
+#region ALIASES
+
+VARIABLE_TYPE: TypeAlias = Literal['int', 'real', 'bool']
 
 #endregion
 
@@ -83,7 +90,7 @@ class geneticalgorithm2:
         function: Callable[[array1D], float],
 
         dimension: int,
-        variable_type: Union[str, Sequence[str]] = 'bool',
+        variable_type: Union[VARIABLE_TYPE, Sequence[VARIABLE_TYPE]] = 'bool',
         variable_boundaries: Optional[Union[array2D, Sequence[Tuple[float, float]]]] = None,
 
         variable_type_mixed=None,
@@ -238,13 +245,12 @@ class geneticalgorithm2:
         self.indexes_int = np.array([])
         self.indexes_float = np.array([])
 
-        VALID_STRINGS = ('bool', 'int', 'real')
         assert_message = (
             f"\n variable_type must be 'bool', 'int', 'real' or a sequence with 'int' and 'real', got {variable_type}"
         )
 
         if isinstance(variable_type, str):
-            assert (variable_type in VALID_STRINGS), assert_message
+            assert (variable_type in VARIABLE_TYPE.__args__), assert_message
             if variable_type == 'real':
                 self.indexes_float = indexes
             else:
@@ -260,7 +266,7 @@ class geneticalgorithm2:
                 "don't use 'bool' if variable_type is a sequence, "
                 "for 'boolean' case use 'int' and specify boundary as (0,1)"
             )
-            assert all(v in VALID_STRINGS for v in variable_type), assert_message
+            assert all(v in VARIABLE_TYPE.__args__ for v in variable_type), assert_message
 
             vartypes = np.array(variable_type)
             self.indexes_int = indexes[vartypes == 'int']
