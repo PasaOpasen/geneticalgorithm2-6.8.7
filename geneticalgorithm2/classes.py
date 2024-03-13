@@ -89,7 +89,9 @@ class AlgorithmParams(DictLikeGetSet):
         assert (can_be_prob(self.elit_ratio)), "elit_ratio must be in range [0,1]"
 
         if self.max_iteration_without_improv is not None and self.max_iteration_without_improv < 1:
-            warnings.warn(f"max_iteration_without_improv is {self.max_iteration_without_improv} but must be None or int > 0")
+            warnings.warn(
+                f"max_iteration_without_improv is {self.max_iteration_without_improv} but must be None or int > 0"
+            )
             self.max_iteration_without_improv = None
 
     def get_CMS_funcs(self) -> Tuple[
@@ -110,7 +112,7 @@ class AlgorithmParams(DictLikeGetSet):
             ('mutation_discrete', self.mutation_discrete_type, Mutations.mutations_discrete_dict()),
             ('selection', self.selection_type, Selection.selections_dict())
         ):
-            if type(value) == str:
+            if isinstance(value, str):
                 if value not in dct:
                     raise ValueError(
                         f"unknown name of {name}: '{value}', must be from {tuple(dct.keys())} or a custom function"
@@ -159,10 +161,15 @@ class Generation(DictLikeGetSet):
 
     def __check_dims(self) -> None:
         if self.variables is not None:
-            assert len(self.variables.shape) == 2, f"'variables' must be matrix with shape (objects, dimensions), not {self.variables.shape}"
+            assert len(self.variables.shape) == 2, (
+                f"'variables' must be matrix with shape (objects, dimensions), not {self.variables.shape}"
+            )
             if self.scores is not None:
                 assert len(self.scores.shape) == 1, f"'scores' must be 1D-array, not with shape {self.scores.shape}"
-                assert self.variables.shape[0] == self.scores.size, f"count of objects ({self.variables.shape[0]}) must be equal to count of scores ({self.scores.size})"
+                assert self.variables.shape[0] == self.scores.size, (
+                    f"count of objects ({self.variables.shape[0]}) "
+                    f"must be equal to count of scores ({self.scores.size})"
+                )
 
     @property
     def size(self) -> int:
@@ -185,10 +192,13 @@ class Generation(DictLikeGetSet):
             st = np.load(path)
         except Exception as err:
             raise Exception(
-                f"if generation object is a string, it must be path to npz file with needed content, but raised exception {repr(err)}"
+                f"if generation object is a string, "
+                f"it must be path to npz file with needed content, but raised exception {repr(err)}"
             )
 
-        assert 'population' in st and 'scores' in st, "saved generation object must contain 'population' and 'scores' fields"
+        assert 'population' in st and 'scores' in st, (
+            "saved generation object must contain 'population' and 'scores' fields"
+        )
 
         return Generation(variables=st['population'], scores=st['scores'])
 
@@ -206,18 +216,26 @@ class Generation(DictLikeGetSet):
 
         elif obj_type == np.ndarray:
 
-            assert len(object.shape) == 2 and (object.shape[1] == dim or object.shape[1] == dim + 1), f"if start_generation is numpy array, it must be with shape (samples, dim) or (samples, dim+1), not {object.shape}"
+            assert len(object.shape) == 2 and (object.shape[1] == dim or object.shape[1] == dim + 1), (
+                f"if start_generation is numpy array, "
+                f"it must be with shape (samples, dim) or (samples, dim+1), not {object.shape}"
+            )
 
             generation = Generation(object, None) if object.shape[1] == dim else Generation.from_pop_matrix(object)
 
         elif obj_type == tuple:
 
-            assert len(object) == 2, f"if start_generation is tuple, it must be tuple with 2 components, not {len(object)}"
+            assert len(object) == 2, (
+                f"if start_generation is tuple, "
+                f"it must be tuple with 2 components, not {len(object)}"
+            )
 
             variables, scores = object
 
-            assert ( (variables is None or scores is None) or (
-                            variables.shape[0] == scores.size)), "start_generation object must contain variables and scores components which are None or 2D- and 1D-arrays with same shape"
+            assert ( (variables is None or scores is None) or (variables.shape[0] == scores.size)), (
+                "start_generation object must contain variables and scores components "
+                "which are None or 2D- and 1D-arrays with same shape"
+            )
 
             generation = Generation(variables=variables, scores=scores)
 
@@ -226,19 +244,29 @@ class Generation(DictLikeGetSet):
                 ('variables' in object and 'scores' in object) and
                 (object['variables'] is None or object['scores'] is None) or
                 (object['variables'].shape[0] == object['scores'].size)
-            ), "start_generation object must contain 'variables' and 'scores' keys which are None or 2D- and 1D-arrays with same shape"
+            ), (
+                "start_generation object must contain 'variables' and 'scores' keys "
+                "which are None or 2D- and 1D-arrays with same shape"
+            )
 
             generation = Generation(variables=object['variables'], scores=object['scores'])
 
         elif obj_type == Generation:
             generation = Generation(variables=object['variables'], scores=object['scores'])
         else:
-            raise TypeError(f"invalid type of generation! Must be in (Union[str, Dict[str, np.ndarray], Generation, np.ndarray, Tuple[Optional[np.ndarray], Optional[np.ndarray]]]), not {obj_type}")
+            raise TypeError(
+                f"invalid type of generation! "
+                f"Must be in (Union[str, Dict[str, np.ndarray], Generation, np.ndarray, "
+                f"Tuple[Optional[np.ndarray], Optional[np.ndarray]]]), "
+                f"not {obj_type}"
+            )
 
         generation.__check_dims()
 
         if generation.variables is not None:
-            assert generation.dim_size == dim, f"generation dimension size {generation.dim_size} does not equal to target size {dim}"
+            assert generation.dim_size == dim, (
+                f"generation dimension size {generation.dim_size} does not equal to target size {dim}"
+            )
 
         return generation
 
@@ -270,7 +298,9 @@ class GAResult(DictLikeGetSet):
 
     @property
     def function(self):
-        warnings.warn(f"'function' field is deprecated, will be removed in version 7, use 'score' to get best population score")
+        warnings.warn(
+            f"'function' field is deprecated, will be removed in version 7, use 'score' to get best population score"
+        )
         return self.score
 
 
