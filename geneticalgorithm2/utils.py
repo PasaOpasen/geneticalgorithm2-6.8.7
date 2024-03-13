@@ -20,10 +20,6 @@ def fast_max(a, b):
     return a if a > b else b
 
 
-def mkdir(folder: str):
-    Path(folder).mkdir(parents=True, exist_ok=True)
-
-
 def can_be_prob(value: float) -> bool:
     return 0 <= value <= 1
 
@@ -33,7 +29,7 @@ def is_current_gen_number(number: Optional[int]):
 
 
 def is_numpy(arg: Any):
-    return type(arg) == np.ndarray
+    return isinstance(arg, np.ndarray)
 
 
 def split_matrix(mat: array2D) -> Tuple[array2D, array1D]:

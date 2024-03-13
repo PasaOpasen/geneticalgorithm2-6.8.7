@@ -3,6 +3,9 @@ from typing import Optional, Sequence
 
 import numpy as np
 
+from .aliases import PathLike
+from .files import mkdir_of_file
+
 
 def plot_several_lines(
     lines: Sequence[Sequence[float]],
@@ -12,7 +15,7 @@ def plot_several_lines(
     title: str = '',
     xlabel: str = 'Generation',
     ylabel: str = 'Minimized function',
-    save_as: Optional[str] = None,
+    save_as: Optional[PathLike] = None,
     dpi: int = 200
 ):
     # import matplotlib
@@ -69,7 +72,7 @@ def plot_pop_scores(scores: Sequence[float], title: str = 'Population scores', s
         for rect in rects[-1:]:
             height = round(rect.get_height(), 2)
             ax.annotate('{}'.format(height),
-                        xy = (rect.get_x() + rect.get_width() / 2, height),
+                        xy=(rect.get_x() + rect.get_width() / 2, height),
                         xytext=(0, 3),  # 3 points vertical offset
                         textcoords="offset points",
                         ha='center', va='bottom', fontsize=14, fontweight='bold')
@@ -82,7 +85,7 @@ def plot_pop_scores(scores: Sequence[float], title: str = 'Population scores', s
     x_coord = np.arange(len(sc))
     my_norm = Normalize(vmin=0, vmax=1)
     
-    rc = ax.bar(x_coord, sc,  width = 0.7, color = cm.get_cmap('Set2')(my_norm(cols)))
+    rc = ax.bar(x_coord, sc,  width=0.7, color=cm.get_cmap('Set2')(my_norm(cols)))
     
     autolabel(rc)
 
@@ -97,6 +100,7 @@ def plot_pop_scores(scores: Sequence[float], title: str = 'Population scores', s
     fig.tight_layout()
     
     if save_as is not None:
-        plt.savefig(save_as, dpi = 200)
+        mkdir_of_file(save_as)
+        plt.savefig(save_as, dpi=200)
     
     plt.show()

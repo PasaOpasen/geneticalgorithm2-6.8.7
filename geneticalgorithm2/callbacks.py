@@ -8,11 +8,12 @@ import numpy as np
 
 from OppOpPopInit import OppositionOperators, SampleInitializers
 
-from .aliases import TypeAlias, array1D, array2D
+from .aliases import TypeAlias, array1D, array2D, PathLike
+from .files import mkdir_of_file, mkdir
 
 from .classes import MiddleCallbackData, Generation
 
-from .utils import mkdir, union_to_matrix, fast_max
+from .utils import union_to_matrix, fast_max
 
 from .crossovers import CrossoverFunc
 from .selections import SelectionFunc
@@ -32,7 +33,7 @@ class Callbacks:
         return lambda generation_number, report_list, last_population, last_scores: None
 
     @staticmethod
-    def SavePopulation(folder: str, save_gen_step: int = 50, file_prefix: str = 'population') -> CallbackFunc:
+    def SavePopulation(folder: PathLike, save_gen_step: int = 50, file_prefix: str = 'population') -> CallbackFunc:
         
         mkdir(folder)
 
@@ -41,18 +42,18 @@ class Callbacks:
             if generation_number % save_gen_step != 0:
                 return
 
-            np.savez(os.path.join(
-                folder,
-                f"{file_prefix}_{generation_number}.npz"),
-                population=last_population,
-                scores=last_scores
+            Generation(last_population, last_scores).save(
+                os.path.join(
+                    folder,
+                    f"{file_prefix}_{generation_number}.npz"
+                )
             )
         
         return func
     
     @staticmethod
     def PlotOptimizationProcess(
-        folder: str,
+        folder: PathLike,
         save_gen_step: int = 50,
         show: bool = False,
         main_color: str = 'green',
@@ -167,7 +168,8 @@ class Actions:
         Parameters
         ----------
         oppositor : oppositor from OppOpPopInit, optional
-            oppositor for applying after duplicates removing. By default -- using just random initializer from creator. The default is None.
+            oppositor for applying after duplicates removing. By default -- using just random initializer from creator.
+                The default is None.
         creator : the function creates population samples, optional
             the function creates population samples if oppositor is None. The default is None.
         converter : func, optional
@@ -276,8 +278,8 @@ class Actions:
 
             plot_pop_scores(
                 data.last_generation.scores,
-                title = title_pattern(data),
-                save_as = use_save_as(data)
+                title=title_pattern(data),
+                save_as=use_save_as(data)
             )
 
             return data
@@ -290,7 +292,7 @@ class ActionConditions:
     @staticmethod
     def EachGen(generation_step: int = 10) -> MiddleCallbackConditionFunc:
 
-        if generation_step < 1 or type(generation_step) != int:
+        if generation_step < 1 or type(generation_step) is not int:
             raise Exception(f"Invalid generation step {generation_step}! Should be int and >=1")
         
         if generation_step == 1:
