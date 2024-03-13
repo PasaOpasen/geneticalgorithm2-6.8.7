@@ -320,7 +320,7 @@ import numpy as np
 # the only one required import
 from geneticalgorithm2 import geneticalgorithm2 as ga # for creating and running optimization model
 
-from geneticalgorithm2 import Generation, AlgorithmParams, MiddleCallbackData # classes for comfortable parameters setting and getting
+from geneticalgorithm2 import Generation, AlgorithmParams # classes for comfortable parameters setting and getting
 
 from geneticalgorithm2 import Crossover, Mutations, Selection # classes for specific mutation and crossover behavior
 
