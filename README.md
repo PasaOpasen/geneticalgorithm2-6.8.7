@@ -15,6 +15,8 @@ https://pasaopasen.github.io/geneticalgorithm2/
 - [Installation](#installation)
 - [Updates information](#updates-information)
   - [**Future**](#future)
+  - [**TODO firstly**](#todo-firstly)
+  - [6.8.7 minor update](#687-minor-update)
   - [6.8.6 minor update](#686-minor-update)
   - [6.8.5 minor update](#685-minor-update)
   - [6.8.4 minor update](#684-minor-update)
@@ -152,6 +154,12 @@ pip install geneticalgorithm2[full]
 
 ## **TODO firstly**
 - Remove old style mensions from README
+
+## 6.8.7 minor update
+
+- some code refactor
+- fixes:
+  - ensure the directory of generation file exists on save
 
 ## 6.8.6 minor update
 

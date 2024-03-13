@@ -7,7 +7,8 @@ import warnings
 
 import numpy as np
 
-from .aliases import array1D, array2D, TypeAlias
+from .aliases import array1D, array2D, TypeAlias, PathLike
+from .files import mkdir_of_file
 
 from .crossovers import Crossover, CrossoverFunc
 from .mutations import Mutations, MutationIntFunc, MutationFloatFunc
@@ -183,11 +184,12 @@ class Generation(DictLikeGetSet):
         # should not be used in main code -- was needed for old versions
         return union_to_matrix(self.variables, self.scores)
 
-    def save(self, path: str):
+    def save(self, path: PathLike):
+        mkdir_of_file(path)
         np.savez(path, population=self.variables, scores=self.scores)
 
     @staticmethod
-    def load(path: str):
+    def load(path: PathLike):
         try:
             st = np.load(path)
         except Exception as err:
